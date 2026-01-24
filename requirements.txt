@@ -1,0 +1,11 @@
+sentence-transformers
+peft
+transformers
+datasets
+evaluate
+rouge_score
+nltk
+torch
+numpy
+Pillow
+tqdm
