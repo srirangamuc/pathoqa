@@ -4,19 +4,16 @@ import os
 
 def get_default_config():
     return {
-        # Paths
         "t5_path": "./final_pathology_model_v2",
         "clip_path": "jamessyx/pathgenclip-vit-large-patch14-hf",
         "output_dir": "./pathvqa_experiment_optimized",
 
-        # Hyperparameters
         "epochs": 10,
         "batch_size": 8,
         "lr": 1e-4,
         "max_len": 128,
         "image_size": 336,
 
-        # Hardware
         "device": "cuda" if torch.cuda.is_available() else "cpu"
     }
 
@@ -38,7 +35,6 @@ def parse_args():
 
     args = parser.parse_args()
     
-    # ensure output dir exists
     os.makedirs(args.output_dir, exist_ok=True)
     
     return vars(args)

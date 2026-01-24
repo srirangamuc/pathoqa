@@ -7,7 +7,6 @@ def get_processors(t5_path, clip_path, image_size):
     tokenizer = T5TokenizerFast.from_pretrained(t5_path)
     processor = CLIPImageProcessor.from_pretrained(clip_path)
 
-    # Forced Resize for PathGen-CLIP compatibility
     if hasattr(processor, "size"):
         processor.size = {"height": image_size, "width": image_size}
     if hasattr(processor, "crop_size"):
@@ -16,7 +15,6 @@ def get_processors(t5_path, clip_path, image_size):
     return tokenizer, processor
 
 def vqa_collate_fn(batch, tokenizer, processor, max_len):
-    # 1. Process Images
     images = []
     for x in batch:
         img = x['image']
@@ -26,7 +24,6 @@ def vqa_collate_fn(batch, tokenizer, processor, max_len):
 
     pixel_values = processor(images, return_tensors="pt").pixel_values
 
-    # 2. Process Questions
     questions = ["Question: " + x['question'] for x in batch]
     inputs = tokenizer(
         questions,
@@ -36,7 +33,6 @@ def vqa_collate_fn(batch, tokenizer, processor, max_len):
         return_tensors="pt"
     )
 
-    # 3. Process Answers
     answers = [str(x['answer']) for x in batch]
     labels = tokenizer(
         answers,
@@ -57,10 +53,7 @@ def vqa_collate_fn(batch, tokenizer, processor, max_len):
     }
 
 def get_dataloaders(config, tokenizer, processor):
-    # Load Dataset
     ds = load_dataset("flaviagiammarino/path-vqa")
-    
-    # helper for partial application of args
     def collate_wrapper(batch):
         return vqa_collate_fn(batch, tokenizer=tokenizer, processor=processor, max_len=config["max_len"])
 

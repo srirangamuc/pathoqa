@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 
 class PathVQA_Evaluator:
     def __init__(self, device):
-        print("⚖️ Loading Metrics (SBERT, BLEU, ROUGE)...")
+        print("Loading Metrics (SBERT, BLEU, ROUGE)")
         self.device = device
         self.sbert = SentenceTransformer('all-MiniLM-L6-v2', device=device)
         self.bleu_metric = evaluate.load("bleu")
@@ -31,22 +31,17 @@ class PathVQA_Evaluator:
         return white_space_fix(remove_articles(remove_punc(lower(s))))
 
     def compute_metrics(self, predictions, ground_truths):
-        # 1. Normalization
         clean_preds = [self.normalize_text(p) for p in predictions]
         clean_truths = [self.normalize_text(t) for t in ground_truths]
 
-        # 2. Categorize (Binary vs Open)
         binary_indices = [i for i, t in enumerate(clean_truths) if t in ['yes', 'no']]
         open_indices = [i for i, t in enumerate(clean_truths) if t not in ['yes', 'no']]
         
-        # --- Binary Metrics ---
         binary_acc = 0.0
         if binary_indices:
-             # Simple Exact Match for Yes/No
              matches = sum([1 for i in binary_indices if clean_preds[i] == clean_truths[i]])
              binary_acc = matches / len(binary_indices)
 
-        # --- Open Metrics ---
         open_sbert = 0.0
         open_exact = 0.0
         open_bleu = 0.0
@@ -79,7 +74,7 @@ class PathVQA_Evaluator:
             open_rouge = rouge_score['rougeL']
 
         return {
-            "overall_score": (binary_acc + open_sbert + open_exact) / 3, # New Composite?
+            "overall_score": (binary_acc + open_sbert + open_exact) / 3,
             "binary_accuracy": binary_acc,
             "binary_count": len(binary_indices),
             "open_sbert": open_sbert,
