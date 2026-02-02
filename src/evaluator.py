@@ -8,7 +8,7 @@ class PathVQA_Evaluator:
     def __init__(self, device):
         print("Loading Metrics (SBERT, BLEU, ROUGE)")
         self.device = device
-        self.sbert = SentenceTransformer('all-MiniLM-L6-v2', device=device)
+        self.sbert = SentenceTransformer('pritamdeka/S-PubMedBert-MS-MARCO', device=device)
         self.bleu_metric = evaluate.load("bleu")
         self.rouge_metric = evaluate.load("rouge")
 
