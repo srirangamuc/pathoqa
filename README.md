@@ -30,7 +30,7 @@
 └── README.md               # Project documentation
 ```
 
-## 🛠️ Installation
+## Installation
 
 1. **Clone the repository**:
 
